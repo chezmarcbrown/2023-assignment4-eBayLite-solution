@@ -4,7 +4,11 @@ from django.core.validators import MinValueValidator
 
 
 class User(AbstractUser):
-    pass
+    def active_listings(self):
+        return Listing.objects.filter(active = True)
+    
+    def my_listings(self):
+        return Listing.objects.filter(creator = self)
 
 
 class Listing(models.Model):

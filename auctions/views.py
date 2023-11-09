@@ -185,3 +185,15 @@ def add_comment(request, listing_id):
         form = CommentForm()
     return render(request, "auctions/listing.html", {
         'form':form, 'listing':listing, 'show_CommentForm':'yes'})
+
+
+from django.http import JsonResponse
+import json
+def api_status(request):
+    my_count = 4
+    active_count = 5
+    status =  {
+        'my_count': my_count,
+        'active_count': active_count
+    }
+    return JsonResponse(status)
