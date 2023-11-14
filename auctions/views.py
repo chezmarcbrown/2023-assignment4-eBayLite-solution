@@ -190,8 +190,9 @@ def add_comment(request, listing_id):
 from django.http import JsonResponse
 import json
 def api_status(request):
-    my_count = 4
-    active_count = 5
+    active_count = Listing.objects.filter(active=True).count()
+    my_count = Listing.objects.filter(creator=request.user).count() if request.user.is_authenticated else 'n/a'
+
     status =  {
         'my_count': my_count,
         'active_count': active_count
