@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function update_stats() {
-    fetch("api/status")
+    fetch("/api/status")
     .then(response => response.json())
     .then(data => {
         document.querySelector('#ml').innerHTML = data['my_count'];

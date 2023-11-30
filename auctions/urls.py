@@ -4,9 +4,9 @@ from django.views.generic.base import TemplateView
 from . import views
 
 urlpatterns = [
-    path("login", views.login_view, name="login"),
-    path("logout", views.logout_view, name="logout"),
-    path("register", views.register, name="register"),
+    path("login/", views.login_view, name="login"),
+    path("logout/", views.logout_view, name="logout"),
+    path("register/", views.register, name="register"),
 
     path("", views.index, name="index"),
     path("listing/<int:listing_id>", views.listing, name="listing"),
