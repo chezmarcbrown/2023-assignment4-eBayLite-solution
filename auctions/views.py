@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseServerError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse, reverse_lazy
 
 from .models import User, Listing, Category
 from .forms import ListingForm, BidForm, CommentForm
@@ -64,10 +65,26 @@ def register(request):
 
 
 def index(request):
-    return render(request, "auctions/index.html", {
+    return render(request, "auctions/index.html", context={
         'listings': Listing.objects.all().filter(active=True).order_by('-created_at'),
         'banner': 'Active Listings'
     })
+
+from django.views.generic import ListView, CreateView, DeleteView, UpdateView
+#------------------- Class-based View
+class ListingsView(ListView):
+    model = Listing
+    template_name = 'auctions/index.html'
+    context_object_name = "listings"
+
+    def get_context_data(self):
+        c = super().get_context_data()
+        c['banner'] = 'Active Listings'
+        return c
+
+    def get_queryset(self):
+        return Listing.objects.filter(active=True).order_by('-created_at')
+
 
 def listing(request, listing_id):
     listing = get_object_or_404(Listing, id=listing_id)
@@ -112,18 +129,6 @@ def my_watchlist(request):
         'banner': 'My Watchlist'
     })
 
-def categories(request):
-    return render(request, "auctions/categories.html", {
-        'categories': Category.objects.all().order_by('name'),
-    })
-
-def category(request, category_id):
-    category = get_object_or_404(Category, id=category_id)
-    listings = Listing.objects.filter(categories = category, active=True)
-    return render(request, "auctions/index.html", {
-        'listings': listings,
-        'banner': f'{category.name} Listings',
-    })
 
 @login_required(login_url='login')
 def create_listing(request):
@@ -143,6 +148,17 @@ def create_listing(request):
     else: 
         form = ListingForm(initial={'starting_bid': 1})
     return render(request, "auctions/new_listing.html", {'form':form})
+
+#-------- Class-based view
+class ListingCreateView(CreateView):
+    model = Listing
+    template_name = "auctions/new_listing.html"
+    form_class = ListingForm
+    success_url = reverse_lazy('index')
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+        return super().form_valid(form)
 
 @login_required(login_url='login')
 # possible todo: prevent user to bid on his own listing
@@ -198,3 +214,52 @@ def api_status(request):
         'active_count': active_count
     }
     return JsonResponse(status)
+
+def categories(request):
+    return render(request, "auctions/categories.html", {
+        'categories': Category.objects.all().order_by('name'),
+    })
+
+class CategoriesView(ListView):
+    model = Category
+    template_name = 'auctions/categories.html'
+    context_object_name = 'categories'
+
+def category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    listings = Listing.objects.filter(categories = category, active=True)
+    return render(request, "auctions/index.html", {
+        'listings': listings,
+        'banner': f'{category.name} Listings',
+    })
+
+class CategoryView(ListView):
+    model = Listing
+    template_name = 'auctions/category_listings.html'
+    context_object_name = 'listings'
+
+    def get_context_data(self):
+        c = super().get_context_data()
+        c['banner'] = 'Category Listings'
+        category_id = self.kwargs["category_id"]
+        category = Category.objects.get(id=category_id)
+        c['category'] = category
+        return c
+
+    def get_queryset(self):
+        return Listing.objects.filter(categories=self.kwargs['category_id'], active=True)
+
+
+class CategoryCreateView(CreateView):
+    model = Category
+    fields = ['name', 'image']
+    success_url = reverse_lazy('categories')
+
+class CategoryEditView(UpdateView):
+    model = Category
+    fields = ['name', 'image']
+    success_url = reverse_lazy('categories')
+
+class CategoryDeleteView(DeleteView):
+    model = Category
+    success_url = reverse_lazy('categories')

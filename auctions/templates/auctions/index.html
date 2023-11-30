@@ -4,28 +4,6 @@
     
 <h2>{{banner}}</h2>
 
-<article>
-    {% for listing in listings %}
-        <section>
-            <h3>
-                <a href="{% url 'listing' listing.id %}"">
-                    {% if listing.image %}
-                        <img src="{{ listing.image.url }}" width="50px">
-                    {% endif %}
-                    {{listing.title}}
-                </a>
-                <small>
-                    High Bid: ${{ listing.high_bid_amount }}
-                    {% if not listing.active %}
-                        - Auction Closed
-                    {% endif %}
-                </small>
-            </h3>
-            <div class="listing-description">{{ listing.description }}</div>
-            <p>
-                {{ listing.watcher_count }} watchers | {{ listing.bid_count }} bidders | {{listing.comment_count }} comments
-            </p>
-        </section>
-    {% endfor %}
-</article>
+{% include "auctions/listings_table.html" %}
+
 {% endblock %}

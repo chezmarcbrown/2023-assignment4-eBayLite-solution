@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.urls import reverse
 
 
 class User(AbstractUser):
@@ -25,6 +26,9 @@ class Listing(models.Model):
 
     def __str__(self):
         return f'{self.title}'
+    
+    def get_absolute_url(self):
+        return reverse('listing', kwargs={'listing_id': self.pk})
 
     def watcher_count(self):
         return len(self.watchers.all())

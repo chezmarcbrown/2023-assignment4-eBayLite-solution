@@ -4,10 +4,14 @@
 
 <h2>Categories</h2>
 
+<button onclick="location.href='{% url "create-category" %}'"> New Category</button>
+
 <article>
     {% for c in categories %}
         <section>
-            <h3><a href="{% url 'category' c.id %}">{{ c.name }}</a></h3>
+            <button onclick="location.href='{% url "update-category" c.id %}'">EDIT </button>
+            <button onclick="location.href='{% url "delete-category" c.id %}'">DELETE </button>
+            <a href="{% url 'category' c.id %}">{{ c.name }}</a>
             {% if c.image %}
                 <div style="display:flex;justify-content:space-evenly;">
                     <img src="{{ c.image.url }}" width="200px">
