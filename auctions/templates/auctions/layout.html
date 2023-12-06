@@ -41,6 +41,7 @@
                 <span>
                     {% if user.is_authenticated %}
                         Welcome <strong>{{ user.username }}!</strong>
+                        <a href="{% url 'password_change' %}">Change Password</a>
                         <a href="{% url 'logout' %}">Log Out</a>
                     {% else %}
                         <a href="{% url 'login' %}">Log In</a>

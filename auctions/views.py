@@ -263,3 +263,7 @@ class CategoryEditView(UpdateView):
 class CategoryDeleteView(DeleteView):
     model = Category
     success_url = reverse_lazy('categories')
+
+from django.contrib.auth import views as auth_views
+class PasswordChangeView(auth_views.PasswordChangeView):
+    success_url = reverse_lazy('index')
