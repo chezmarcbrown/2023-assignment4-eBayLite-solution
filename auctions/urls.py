@@ -1,11 +1,12 @@
 from django.urls import path
 from django.views.generic.base import TemplateView
+from django.contrib.auth import views as auth_views
 
 from . import views
 
 urlpatterns = [
-    path("login/", views.login_view, name="login"),
-    path("logout/", views.logout_view, name="logout"),
+    #path("login/", views.login_view, name="login"),
+    #path("logout/", views.logout_view, name="logout"),
     path("register/", views.register, name="register"),
 
     #path("", views.index, name="index"),
@@ -28,5 +29,9 @@ urlpatterns = [
     path('category/update/<int:pk>', views.CategoryEditView.as_view(), name='update-category'),
     path('category/delete/<int:pk>', views.CategoryDeleteView.as_view(), name='delete-category'),
 
+    path("login/", auth_views.LoginView.as_view(), name="login"),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path('password_change/', views.PasswordChangedView.as_view(), name='password_change'),
+    path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
 
 ]
